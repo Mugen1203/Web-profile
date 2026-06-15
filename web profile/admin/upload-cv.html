@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload CV</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script>
+        // Client-side authentication check
+        if (sessionStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="../js/db.js" defer></script>
+</head>
+<body>
+
+    <main class="container">
+        <div class="card-glass" style="margin-top: 40px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            <h1>Upload CV</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Tải lên tài liệu CV mới của bạn (dưới dạng file PDF hoặc ảnh, được lưu vào trình duyệt dưới dạng Base64).</p>
+            
+            <div id="alert-container"></div>
+
+            <form id="cv-form" style="margin: 0;">
+                <div>
+                    <label for="cv">Select CV File (PDF preferred)</label>
+                    <input type="file" id="cv" name="cv" accept=".pdf,application/pdf,image/*" required style="margin-top: 10px; padding: 10px;">
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <a href="dashboard.html" class="btn btn-secondary" style="flex: 1;">Back</a>
+                    <button class="btn" type="submit" style="flex: 1;">Upload CV</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("cv-form");
+            const alertContainer = document.getElementById("alert-container");
+
+            if (form) {
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    
+                    const fileInput = document.getElementById("cv");
+                    const file = fileInput.files[0];
+
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const base64Data = reader.result;
+                        
+                        if (window.db) {
+                            window.db.setCV(base64Data);
+                            
+                            alertContainer.innerHTML = `
+                                <div class="alert alert-success">
+                                    CV uploaded successfully!
+                                </div>
+                            `;
+                            form.reset();
+
+                            setTimeout(() => {
+                                alertContainer.innerHTML = '';
+                            }, 4000);
+                        }
+                    };
+                    
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

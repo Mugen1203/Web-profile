@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Project</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script>
+        // Client-side authentication check
+        if (sessionStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="../js/db.js" defer></script>
+</head>
+<body>
+
+    <main class="container">
+        <div class="card-glass" style="margin-top: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <h1>Edit Project</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Cập nhật thông tin chi tiết của dự án.</p>
+            
+            <form id="project-edit-form" style="margin: 0;">
+                <div>
+                    <label for="project_name">Project Name</label>
+                    <input type="text" id="project_name" name="project_name" placeholder="Project Name" required style="margin-top: 10px;">
+                </div>
+
+                <div>
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="5" placeholder="Project description..." required style="margin-top: 10px; resize: vertical;"></textarea>
+                </div>
+
+                <div>
+                    <label for="technologies">Technologies</label>
+                    <input type="text" id="technologies" name="technologies" placeholder="e.g. PHP, MySQL, React" required style="margin-top: 10px;">
+                </div>
+
+                <div>
+                    <label for="github_link">GitHub Link</label>
+                    <input type="text" id="github_link" name="github_link" placeholder="e.g. https://github.com/user/repo" style="margin-top: 10px;">
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <a href="project-list.html" class="btn btn-secondary" style="flex: 1;">Cancel</a>
+                    <button class="btn" type="submit" style="flex: 1;">Update Project</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Wait slightly for db.js to load
+            setTimeout(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const projectId = parseInt(urlParams.get('id'), 10);
+                
+                if (!projectId || !window.db) {
+                    window.location.href = "project-list.html";
+                    return;
+                }
+
+                const projects = window.db.getProjects();
+                const project = projects.find(p => p.id === projectId);
+
+                if (!project) {
+                    window.location.href = "project-list.html";
+                    return;
+                }
+
+                // Populate values
+                document.getElementById("project_name").value = project.project_name || '';
+                document.getElementById("description").value = project.description || '';
+                document.getElementById("technologies").value = project.technologies || '';
+                document.getElementById("github_link").value = project.github_link || '';
+
+                const form = document.getElementById("project-edit-form");
+                if (form) {
+                    form.addEventListener("submit", (e) => {
+                        e.preventDefault();
+                        
+                        const name = document.getElementById("project_name").value.trim();
+                        const description = document.getElementById("description").value.trim();
+                        const technologies = document.getElementById("technologies").value.trim();
+                        const githubLink = document.getElementById("github_link").value.trim();
+
+                        window.db.editProject(projectId, name, description, technologies, githubLink);
+                        window.location.href = "project-list.html";
+                    });
+                }
+            }, 50);
+        });
+    </script>
+</body>
+</html>

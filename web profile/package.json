@@ -1,0 +1,12 @@
+{
+  "name": "web-profile",
+  "version": "1.0.0",
+  "description": "Portfolio and skills website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

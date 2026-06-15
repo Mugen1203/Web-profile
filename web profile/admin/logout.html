@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logging Out...</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            sessionStorage.removeItem('admin_logged_in');
+            window.location.href = "login.html";
+        });
+    </script>
+</head>
+<body>
+    Logging out, please wait...
+</body>
+</html>

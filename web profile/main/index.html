@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Home</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/db.js" defer></script>
+    <script src="../js/components.js" defer></script>
+</head>
+
+<body>
+
+    <!-- Dynamic Header -->
+    <div id="navbar-placeholder"></div>
+
+    <main>
+        <section class="hero container">
+            <img id="avatar-img" src="../uploads/avt.jpg" alt="Avatar">
+            <h1>Trần Minh Quang</h1>
+            <h3>Web Developer</h3>
+            <p>
+                Sinh viên CNTT yêu thích HTML, PHP và Python. Định hướng trở thành một Web Developer chuyên nghiệp.
+            </p>
+            <br>
+            <a id="cv-link" href="../uploads/CV_Tran Minh Quang_Intern.pdf" class="btn" download>
+                Download CV
+            </a>
+        </section>
+
+        <section class="skills container">
+            <div class="card-glass">
+                <h2>Skills</h2>
+                <div class="skills-grid" id="skills-container">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Dynamic Footer -->
+    <div id="footer-placeholder"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Wait slightly for db.js to initialize
+            setTimeout(() => {
+                // Update avatar & CV
+                const avatarImg = document.getElementById("avatar-img");
+                if (avatarImg && window.db) {
+                    avatarImg.src = window.db.getAvatar();
+                }
+
+                const cvLink = document.getElementById("cv-link");
+                if (cvLink && window.db) {
+                    cvLink.href = window.db.getCV();
+                }
+
+                // Load skills
+                const skillsContainer = document.getElementById("skills-container");
+                if (skillsContainer && window.db) {
+                    const skills = window.db.getSkills();
+                    if (skills.length === 0) {
+                        skillsContainer.innerHTML = '<p style="color: var(--text-secondary);">No skills listed yet.</p>';
+                    } else {
+                        skillsContainer.innerHTML = skills.map(skill => `
+                            <div class="skill-card">
+                                <h3>${skill.skill_name}</h3>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${skill.level_percent}%"></div>
+                                </div>
+                                <p>${skill.level_percent}%</p>
+                            </div>
+                        `).join('');
+                    }
+                }
+            }, 50);
+        });
+    </script>
+</body>
+
+</html>

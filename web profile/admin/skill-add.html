@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Skill</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script>
+        // Client-side authentication check
+        if (sessionStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="../js/db.js" defer></script>
+</head>
+<body>
+
+    <main class="container">
+        <div class="card-glass" style="margin-top: 40px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            <h1>Add Skill</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Thêm kỹ năng mới và mức độ thuần thục.</p>
+            
+            <form id="skill-add-form" style="margin: 0;">
+                <div>
+                    <label for="skill_name">Skill Name</label>
+                    <input type="text" id="skill_name" name="skill_name" placeholder="e.g. Java, Python, AWS" required style="margin-top: 10px;">
+                </div>
+
+                <div>
+                    <label for="level">Level (%)</label>
+                    <input type="number" id="level" name="level" min="1" max="100" placeholder="e.g. 85" required style="margin-top: 10px;">
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <a href="dashboard.html" class="btn btn-secondary" style="flex: 1;">Cancel</a>
+                    <button class="btn" type="submit" style="flex: 1;">Save Skill</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("skill-add-form");
+
+            if (form) {
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById("skill_name").value.trim();
+                    const level = document.getElementById("level").value;
+
+                    if (window.db) {
+                        window.db.addSkill(name, level);
+                        window.location.href = "dashboard.html";
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

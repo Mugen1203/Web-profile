@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Projects</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script>
+        // Client-side authentication check
+        if (sessionStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="../js/db.js" defer></script>
+</head>
+<body>
+
+    <main class="container">
+        <div class="admin-header card-glass" style="margin-top: 20px;">
+            <div>
+                <h1>Project Management</h1>
+                <p style="color: var(--text-secondary);">Add, edit, or delete projects in your portfolio.</p>
+            </div>
+            <div class="admin-actions">
+                <a href="dashboard.html" class="btn btn-secondary">Back to Dashboard</a>
+                <a href="project-add.html" class="btn">Add Project</a>
+            </div>
+        </div>
+
+        <div class="card-glass" style="margin-top: 30px;">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Project Name</th>
+                            <th>Technologies</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projects-table-body">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Wait slightly for db.js to load
+            setTimeout(() => {
+                refreshTable();
+            }, 50);
+        });
+
+        function refreshTable() {
+            if (!window.db) return;
+
+            const projects = window.db.getProjects();
+            const tbody = document.getElementById("projects-table-body");
+            
+            if (projects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-secondary);">No projects listed yet.</td></tr>';
+            } else {
+                tbody.innerHTML = projects.map(project => `
+                    <tr>
+                        <td>#${project.id}</td>
+                        <td style="font-weight: 600; color: var(--text-primary);">${project.project_name}</td>
+                        <td><span class="tech-tag">${project.technologies || 'None'}</span></td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 8px;">
+                                <a href="project-edit.html?id=${project.id}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px;">
+                                    Edit
+                                </a>
+                                <a href="project-delete.html?id=${project.id}" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; box-shadow: none;">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+    </script>
+</body>
+</html>

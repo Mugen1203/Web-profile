@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Messages</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script>
+        // Client-side authentication check
+        if (sessionStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="../js/db.js" defer></script>
+</head>
+<body>
+
+    <main class="container">
+        <div class="admin-header card-glass" style="margin-top: 20px;">
+            <div>
+                <h1>Contact Messages</h1>
+                <p style="color: var(--text-secondary);">Thư liên hệ và lời nhắn từ người xem portfolio.</p>
+            </div>
+            <div class="admin-actions">
+                <a href="dashboard.html" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+
+        <div class="card-glass" style="margin-top: 30px;">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Message</th>
+                            <th>Date Sent</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contacts-table-body">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Wait slightly for db.js to load
+            setTimeout(() => {
+                if (window.db) {
+                    const contacts = window.db.getContacts();
+                    const tbody = document.getElementById("contacts-table-body");
+
+                    if (contacts.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-secondary);">No messages received yet.</td></tr>';
+                    } else {
+                        tbody.innerHTML = contacts.map(c => {
+                            const dateStr = new Date(c.created_at).toLocaleString('vi-VN');
+                            return `
+                                <tr>
+                                    <td style="font-weight: 600; color: var(--text-primary);">${c.name}</td>
+                                    <td><a href="mailto:${c.email}" style="color: var(--accent-cyan); text-decoration: none;">${c.email}</a></td>
+                                    <td style="color: var(--text-secondary); max-width: 400px; word-wrap: break-word; white-space: normal;">${c.message}</td>
+                                    <td style="font-size: 0.9rem; color: var(--text-secondary);">${dateStr}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            }, 50);
+        });
+    </script>
+</body>
+</html>

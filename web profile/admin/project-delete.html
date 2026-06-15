@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deleting Project...</title>
+    <script src="../js/db.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            if (id && window.db) {
+                window.db.deleteProject(id);
+            }
+            window.location.href = "dashboard.html";
+        });
+    </script>
+</head>
+<body>
+    Deleting project, please wait...
+</body>
+</html>

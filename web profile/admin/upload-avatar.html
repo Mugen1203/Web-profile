@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Avatar</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script>
+        // Client-side authentication check
+        if (sessionStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="../js/db.js" defer></script>
+</head>
+<body>
+
+    <main class="container">
+        <div class="card-glass" style="margin-top: 40px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            <h1>Upload Avatar</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Tải lên hình đại diện mới (được lưu vào trình duyệt của bạn dưới dạng Base64).</p>
+            
+            <div id="alert-container"></div>
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img id="current-avatar-preview" src="../uploads/avt.jpg" alt="Avatar Preview" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color);">
+            </div>
+
+            <form id="avatar-form" style="margin: 0;">
+                <div>
+                    <label for="avatar">Select Image File</label>
+                    <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/jpg" required style="margin-top: 10px; padding: 10px;">
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <a href="dashboard.html" class="btn btn-secondary" style="flex: 1;">Back</a>
+                    <button class="btn" type="submit" style="flex: 1;">Upload</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load current avatar
+            setTimeout(() => {
+                const previewImg = document.getElementById("current-avatar-preview");
+                if (previewImg && window.db) {
+                    previewImg.src = window.db.getAvatar();
+                }
+            }, 50);
+
+            const form = document.getElementById("avatar-form");
+            const alertContainer = document.getElementById("alert-container");
+            const previewImg = document.getElementById("current-avatar-preview");
+
+            if (form) {
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    
+                    const fileInput = document.getElementById("avatar");
+                    const file = fileInput.files[0];
+
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const base64Data = reader.result;
+                        
+                        if (window.db) {
+                            window.db.setAvatar(base64Data);
+                            previewImg.src = base64Data;
+                            
+                            alertContainer.innerHTML = `
+                                <div class="alert alert-success">
+                                    Avatar uploaded successfully!
+                                </div>
+                            `;
+                            form.reset();
+
+                            setTimeout(() => {
+                                alertContainer.innerHTML = '';
+                            }, 4000);
+                        }
+                    };
+                    
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
