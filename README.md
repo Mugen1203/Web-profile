@@ -1,1 +1,1 @@
-# Web-profile
+Dự án là một trang web giới thiệu năng lực cá nhân kết hợp trang quản trị quản lý nội dung (CMS Dashboard). Website cho phép người dùng xem thông tin cá nhân, kỹ năng, các dự án đã thực hiện và gửi liên hệ trực tiếp. Điểm đặc biệt của dự án là không cần kết nối cơ sở dữ liệu server-side phức tạp, toàn bộ dữ liệu động (kỹ năng, dự án, thông điệp liên hệ) và trạng thái đăng nhập được quản lý bằng cơ sở dữ liệu giả lập ở Client-side (Local Database).# Web-profile
